@@ -2,7 +2,8 @@ import pytest
 import sqlite3
 import os
 from registration.registration import create_db, add_user, authenticate_user, display_users
-
+from io import StringIO
+import sys
 @pytest.fixture(scope="module")
 def setup_database():
     """Фикстура для настройки базы данных перед тестами и её очистки после."""
@@ -35,6 +36,23 @@ def test_add_new_user(setup_database, connection):
     cursor.execute("SELECT * FROM users WHERE username='testuser';")
     user = cursor.fetchone()
     assert user, "Пользователь должен быть добавлен в базу данных."
+def test_add_user():
+    username = 'test_user'
+    email = 'test@example.com'
+    password = 'test_password'
+    assert add_user(username, email, password) == True
+def test_authenticate_user():
+    username = 'test_user'
+    password = 'test_password'
+    assert authenticate_user(username, password) == True
+
+
+def test_display_users(capsys):
+    display_users()
+    captured = capsys.readouterr()
+    assert "Логин: test_user, Электронная почта: test@example.com" in captured.out
+
+
 
 # Возможные варианты тестов:
 """

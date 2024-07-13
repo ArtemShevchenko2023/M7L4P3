@@ -1,7 +1,5 @@
 import sqlite3
-
 DB_NAME = 'users.db'
-
 def create_db():
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
@@ -13,7 +11,6 @@ def create_db():
             )
         ''')
         conn.commit()
-
 def add_user(username, email, password):
     try:
         with sqlite3.connect(DB_NAME) as conn:
@@ -23,33 +20,26 @@ def add_user(username, email, password):
         return True
     except sqlite3.IntegrityError:
         return False
-
 def authenticate_user(username, password):
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM users WHERE username=? AND password=?', (username, password))
         return cursor.fetchone() is not None
-
 def display_users():
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute('SELECT username, email FROM users')
         for user in cursor.fetchall():
             print(f"Логин: {user[0]}, Электронная почта: {user[1]}")
-
-
 def user_choice():
     print("\n1. Авторизоваться")
     print("2. Зарегистрироваться")
     choice = input("Введите ваш выбор (1/2): ")
     return choice
-
 def main():
     create_db()
     display_users()  # Показать список пользователей перед выбором действия
-
     choice = user_choice()
-
     if choice == '1':
         username = input("Введите логин: ")
         password = input("Введите пароль: ")
@@ -64,6 +54,5 @@ def main():
         add_user(username, email, password)
     else:
         print("Неверный ввод. Пожалуйста, введите 1 для авторизации или 2 для регистрации.")
-
 if __name__ == "__main__":
     main()
